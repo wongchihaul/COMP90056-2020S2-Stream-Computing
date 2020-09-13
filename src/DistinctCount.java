@@ -1,3 +1,3 @@
 public interface DistinctCount {
-    int compute(int[] element);
+    long compute(int[] element);
 }

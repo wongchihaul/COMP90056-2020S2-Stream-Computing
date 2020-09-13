@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.List;
 
 public class hyperLogLog implements DistinctCount {
     private final int b;
@@ -7,10 +6,10 @@ public class hyperLogLog implements DistinctCount {
     public hyperLogLog(int b) {
         this.b = b;
     }
-    public int compute(int[] elements) {
+    public long compute(int[] elements) {
         int m = 1 << b;
         int[] M = new int[m];
-        Hash h = new Hash();
+        LongHash h = new LongHash();
         for (int v : elements) {
             String x = h.h2b(v);
             int j = 1 + Integer.parseInt(x.substring(0, b),2);  //the first b bits of x

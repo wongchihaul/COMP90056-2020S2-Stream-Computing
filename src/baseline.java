@@ -1,12 +1,12 @@
 import java.util.HashSet;
 
 public class baseline implements DistinctCount{
-    private static HashSet<Integer> hset = new HashSet<>();
+    private static HashSet<Long> hset = new HashSet<>();
     public baseline() {
     }
 
-    public int compute(int[] elements) {
-        for(int e : elements) {
+    public long compute(int[] elements) {
+        for(long e : elements) {
             hset.add(e);
         }
         return hset.size();
