@@ -3,13 +3,11 @@ import java.util.List;
 
 public class hyperLogLog implements DistinctCount {
     private final int b;
-    private List<Integer> candidate = Arrays.asList(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
     public hyperLogLog(int b) {
-        assert (candidate.contains(b));
         this.b = b;
     }
-    public long compute(int[] elements) {
+    public int compute(int[] elements) {
         int m = 1 << b;
         int[] M = new int[m];
         Hash h = new Hash();
@@ -38,15 +36,15 @@ public class hyperLogLog implements DistinctCount {
                 alpha_m = 0.7213 / (1 + 1.079 / m);
         }
 
-        long E = (long) (alpha_m * Math.pow(m, 2) * Math.pow(Arrays.stream(M).mapToDouble(v -> Math.pow(2, -v)).sum(), -1));
+        int E = (int) (alpha_m * Math.pow(m, 2) * Math.pow(Arrays.stream(M).mapToDouble(v -> Math.pow(2, -v)).sum(), -1));
         int V = (int) Arrays.stream(M).filter(v -> v == 0).count();
         if (E <= 2.5 * m) {
-            return (V != 0) ? (long) (m * Math.log((double)m / V)) : E;
+            return (V != 0) ? (int) (m * Math.log((double)m / V)) : E;
         }
         if (E <= Math.pow(2, 32) / 30) {
             return E;
         } else {
-            return (long) (-Math.pow(2, 32) * Math.log(1 - E / Math.pow(2, 32)));
+            return (int) (-Math.pow(2, 32) * Math.log(1 - E / Math.pow(2, 32)));
         }
     }
 }

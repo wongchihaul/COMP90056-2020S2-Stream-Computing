@@ -4,25 +4,23 @@
 // Aug 2017-20
 
 public class Hash{
-	private long p1 = 2305843009213693952L ; // 2^61 - 1
-	private long p2 = 4294968827L; // slightly lager than 2^32
-	private long a1,b1;		// only use for hash tables < 1321123 in size //for h2u
-	private long a2,b2;		//for h2b
+	private int p = 1073741789; //smaller than 2^30
+	private int a,b;		// only use for hash tables < 24593 in size
 
 	public Hash(){
-//		a=StdRandom.uniform(p1 -1)+1;
-//		b=StdRandom.uniform(p1); // changed from p-1
-		a1 = (long) (StdRandom.uniform(0,p1-1) + 1);
-		b1 = (long) (StdRandom.uniform(0,p1));
+		a=StdRandom.uniform(p-1)+1;
+		b=StdRandom.uniform(p); // changed from p-1
 	}
-	public long h2u(int x,long range){
-		long prod = a1 *(long)x;
-		prod += b1;
-		long y = prod % p1;
-		return y % range;
+	public int h2u(int x,int range){
+		long prod = (long)a*(long)x;
+		prod += (long)b;
+		long y = prod % (long) p;
+		int r = (int) y % range;
+		//System.out.format("x %12d y %12d r %12d %n", x,y,r);
+		return r;
 	}
 	public String h2b(int x) {
-		return addZeroLHS(Long.toBinaryString(h2u(x, p2) & 0xffffffffL),32);
+		return addZeroLHS(Integer.toBinaryString(h2u(x,2147483646)),32);
 //		return Long.toBinaryString(h2u(x, p2) & 0xffffffffL);
 	}
 

@@ -5,7 +5,7 @@ public class baseline implements DistinctCount{
     public baseline() {
     }
 
-    public long compute(int[] elements) {
+    public int compute(int[] elements) {
         for(int e : elements) {
             hset.add(e);
         }
