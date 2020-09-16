@@ -1,37 +1,52 @@
-// Hash.java
-// Hash class
-// awirth for COMP90056
-// Aug 2017-20
+import java.math.BigInteger;
 
-public class Hash{
-	private int p = 1073741789; //smaller than 2^30
-	private int a,b;		// only use for hash tables < 24593 in size
+public class Hash {
+    private long p1 = 2199023255579L;  // slightly larger than 2^41, for BJKST
+    private long p2 = 6074001001L; // 2^32 < p2 < 2^33, for hyperLoglog
+    private long a1,b1;		// only use for hash tables < 1321123 in size
+    private long a2,b2;     //  only use for hash tables < 2^32 in size
 
-	public Hash(){
-		a=StdRandom.uniform(p-1)+1;
-		b=StdRandom.uniform(p); // changed from p-1
-	}
-	public int h2u(int x,int range){
-		long prod = (long)a*(long)x;
-		prod += (long)b;
-		long y = prod % (long) p;
-		int r = (int) y % range;
-		//System.out.format("x %12d y %12d r %12d %n", x,y,r);
-		return r;
-	}
-	public String h2b(int x) {
-		return addZeroLHS(Integer.toBinaryString(h2u(x,2147483646)),32);
-//		return Long.toBinaryString(h2u(x, p2) & 0xffffffffL);
-	}
+    public Hash(){
+        StdRandom.setSeed(0);
+        a1 = (long) (StdRandom.uniform(0,p1 - 1) + 1);
+        b1 = (long) StdRandom.uniform(0,p1);
+        a2 = (long) (StdRandom.uniform(0,p2 - 1) + 1);
+        b2 = (long) StdRandom.uniform(0,p2);
+//
+//        System.out.println(a1);
+//        System.out.println(b1);
+//        System.out.println(p1);
+    }
+
+    /**
+     * Two-family hash function
+     * @param x
+     * @param range
+     * @return
+     */
+    public long h2u(long x,long range){
+        long prod = a1 *x;
+        prod += b1;
+        long y = prod % p1;
+        return y % range;
+    }
 
 
-	public String addZeroLHS(String str, int strLen) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < strLen - str.length(); i++) {
-			sb.append("0");
-		}
-		sb.append(str);
-		return sb.toString();
-	}
+    public String h2b(long x) {
+        long prod = a2 * x;
+        prod += b2;
+        long y = prod % p2;
+        long hashValue = y % (long)(Math.pow(2,32));
+        return addZeroLHS(Long.toBinaryString(hashValue & 4294967295L),32);     //get lower 32-bit after hash
+    }
 
+
+    public String addZeroLHS(String str, int strLen) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < strLen - str.length(); i++) {
+            sb.append("0");
+        }
+        sb.append(str);
+        return sb.toString();
+    }
 }

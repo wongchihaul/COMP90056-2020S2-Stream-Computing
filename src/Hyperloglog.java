@@ -1,16 +1,19 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
-public class hyperLogLog implements DistinctCount {
+public class Hyperloglog implements DistinctCount {
     private final int b;
+    private int RawE;
 
-    public hyperLogLog(int b) {
+    public Hyperloglog(int b) {
         this.b = b;
     }
-    public long compute(int[] elements) {
+    public int getRawE(){ return this.RawE;}
+    public long compute(ArrayList<Long> elements) {
         int m = 1 << b;
         int[] M = new int[m];
-        LongHash h = new LongHash();
-        for (int v : elements) {
+        Hash h = new Hash();
+        for (long v : elements) {
             String x = h.h2b(v);
             int j = 1 + Integer.parseInt(x.substring(0, b),2);  //the first b bits of x
             String w = x.substring(b);  //the rest bits of x
@@ -36,6 +39,7 @@ public class hyperLogLog implements DistinctCount {
         }
 
         int E = (int) (alpha_m * Math.pow(m, 2) * Math.pow(Arrays.stream(M).mapToDouble(v -> Math.pow(2, -v)).sum(), -1));
+        this.RawE = E;
         int V = (int) Arrays.stream(M).filter(v -> v == 0).count();
         if (E <= 2.5 * m) {
             return (V != 0) ? (int) (m * Math.log((double)m / V)) : E;

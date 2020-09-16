@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public interface DistinctCount {
-    long compute(int[] element);
+    long compute(ArrayList<Long> elements);
 }
