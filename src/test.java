@@ -1,20 +1,19 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
+import java.io.File;
+import java.util.*;
 
 public class test {
     public static void main(String[] args) {
         StdRandom.setSeed(0);
 //        Question3();
 //        Question4();
-        Question6();
+        Question5();
+//        Question6();
 //        Question7();
 //        Question8();
     }
 
     public static void Question3(){
-        int universe = (int)Math.pow(2,21);           //in order not to go beyond 2^63 - 1
+        int universe = (int)Math.pow(2,20);           //in order not to go beyond 2^61 - 1
         int numOfDistinct = (int)Math.pow(2,10);
         Hash h = new Hash();
         ArrayList<Integer> elements = new ArrayList<>();
@@ -33,12 +32,12 @@ public class test {
     }
 
     public static void Question4(){
-        long universe = (long)Math.pow(2,20);
+        long universe = (long)Math.pow(2,32);
         Hyperloglog hlog = new Hyperloglog(16);
         Baseline bsl = new Baseline();
-        for (int i = 1; i < 7; i++) {
+        for (int i = 1; i < 6; i++) {
             int numOfDistinct = (int)Math.pow(10,i);
-            int length = (int)Math.pow(10,7);
+            int length = (int)Math.pow(10,6);
             long[] dumpArray = new long[numOfDistinct];
             for (int j = 0; j < numOfDistinct ; j++) {
                 dumpArray[j] = (long)StdRandom.uniform(0,universe);
@@ -61,7 +60,70 @@ public class test {
     }
 
     public static void Question5(){
-
+        int universe = (int)Math.pow(2,20);               //in order not to exceed 2^61 - 1
+        BJKST bjkst = new BJKST(universe, 0.05);
+        Hyperloglog hlog = new Hyperloglog(16);          // 2^9 = 512, 1.04/sqrt(512) ~= 0.046
+        Baseline bsl = new Baseline();
+        int d = (int)(12 * Math.log(1 / 0.1));
+        System.out.println(" Number of Distinct Elements now may be 10^4");
+        ArrayList<Long> bjkst4 = new ArrayList<>();
+        ArrayList<Long> hyperloglog4 = new ArrayList<>();
+        for (int i = 0; i < d; i++) {
+            int numOfDistinct4 = (int)Math.pow(10,4.002);                       //in order to get exact 10^4 distinct elements
+            int length4 = (int)Math.pow(10,5);
+            long[] dumpArray4 = new long[numOfDistinct4];
+            for (int j = 0; j < numOfDistinct4 ; j++) {
+                dumpArray4[j] = StdRandom.uniform(0,universe);
+            }
+            ArrayList<Long> elements4 = new ArrayList<>();
+            for (int k = 0; k < numOfDistinct4; k++) {               //for each distinct element, repeat length/numOfDistinct times
+                for(int m = 0; m < length4/numOfDistinct4; m++){
+                    elements4.add(dumpArray4[k]);
+                }
+            }
+            Collections.shuffle(elements4);
+            long bjkstCardinality = bjkst.compute(elements4);
+            long hlogCardinality = hlog.compute(elements4);
+            bjkst4.add(bjkstCardinality);
+            hyperloglog4.add(hlogCardinality);
+//            if(i == 0) {System.out.println("Exact Distinct count: " +medianTrick(bsl, elements4,0.05));} else{break;}             //get the exact  number distinct elememts
+        }
+        System.out.println("==============================");
+        System.out.println(" Number of Distinct Elements now may be 10^6");
+        ArrayList<Long> bjkst6 = new ArrayList<>();
+        ArrayList<Long> hyperloglog6 = new ArrayList<>();
+        for (int i = 0; i < d; i++) {
+//            int numOfDistinct6 = (int)Math.pow(10,5.02165);         //in order to get exact 10^5 distinct elements
+            int numOfDistinct6 = (int)Math.pow(10,6.50852);             //in order to get exact 10^6 distinct elements
+            int length6 = (int)Math.pow(10,7);
+            long[] dumpArray6 = new long[numOfDistinct6];
+            for (int j = 0; j < numOfDistinct6 ; j++) {
+                dumpArray6[j] = StdRandom.uniform(universe);
+            }
+            ArrayList<Long> elements6 = new ArrayList<>();
+            for (int k = 0; k < numOfDistinct6; k++) {               //for each distinct element, repeat length/numOfDistinct times
+                for(int m = 0; m < length6/numOfDistinct6; m++){
+                    elements6.add(dumpArray6[k]);
+                }
+            }
+            Collections.shuffle(elements6);
+            long bjkstCardinality = bjkst.compute(elements6);
+            long hlogCardinality = hlog.compute(elements6);
+            bjkst6.add(bjkstCardinality);
+            hyperloglog6.add(hlogCardinality);
+//            if(i == 0) {System.out.println("Exact Distinct count: " +medianTrick(bsl, elements6,0.1));} else{break;}          //get the exact  number distinct elememts
+        }
+        System.out.println("bjkst4: ");
+        bjkst4.stream().forEach(v -> System.out.print(v + ","));
+        System.out.println();
+        System.out.println("bjkst6: ");
+        bjkst6.stream().forEach(v -> System.out.print(v + ","));
+        System.out.println();
+        System.out.println("hyperloglog4: ");
+        hyperloglog4.stream().forEach(v -> System.out.print(v + ","));
+        System.out.println();
+        System.out.println("hyperloglog6: ");
+        hyperloglog6.stream().forEach(v -> System.out.print(v + ","));
     }
 
     public static void Question6(){
@@ -69,9 +131,9 @@ public class test {
         BJKST bjkst = new BJKST(universe, 0.05);
         Hyperloglog hlog = new Hyperloglog(16);
         Baseline bsl = new Baseline();
-        for(int i = 1; i < 6; i++){
-            int numOfDistinct = (int)Math.pow(10,4 * (1 + 0.04 * i));
-            int length = (int)Math.pow(10,7);
+        for(int i = 1; i < 5; i++){
+            int numOfDistinct = (int)Math.pow(10,i);
+            int length = (int)Math.pow(10,6);
             long[] dumpArray = new long[numOfDistinct];
             for (int j = 0; j < numOfDistinct ; j++) {
                 dumpArray[j] = StdRandom.uniform(0,universe);

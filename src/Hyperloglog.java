@@ -42,12 +42,15 @@ public class Hyperloglog implements DistinctCount {
         this.RawE = E;
         int V = (int) Arrays.stream(M).filter(v -> v == 0).count();
         if (E <= 2.5 * m) {
+            System.out.println("E <= 2.5 * m");
             return (V != 0) ? (long) (m * Math.log((double)m / V)) : E;
         }
         if (E <= Math.pow(2, 32) / 30) {
+            System.out.println("E <= Math.pow(2, 32) / 30");
             return E;
         } else {
-            return (long) (-Math.pow(2, 32) * Math.log(1 - E / Math.pow(2, 32)));
+            System.out.println("E > Math.pow(2, 32) / 30");
+            return (long) (- Math.pow(2, 32) * Math.log(1 - E / Math.pow(2, 32)));
         }
     }
 }
