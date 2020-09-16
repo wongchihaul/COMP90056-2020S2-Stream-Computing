@@ -13,7 +13,7 @@ public class BJKST implements DistinctCount {
     }
 
     public long compute(ArrayList<Long> elements) {
-        int t = (int) Math.ceil(96 / Math.pow(eps, 2));         // t smallest hash value
+        int t = (int) Math.ceil(16 / Math.pow(eps, 2));         // t smallest hash value
         Hash h = new Hash();
         PriorityQueue<Long> pq = new PriorityQueue<>(Collections.reverseOrder());      //Max Heap tracks t-th smallest hash value that ever seen so far
         for (int i = 0; i < t; i++) {

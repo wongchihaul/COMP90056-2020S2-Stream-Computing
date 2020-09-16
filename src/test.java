@@ -3,40 +3,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
-//public class test {
-//    public static void main(String[] args) {
-//        ArrayList<Integer> testArray = new ArrayList<>();
-//        StdRandom.setSeed(0);
-////        int universe = 13000;  // less than p^(1/3), use this universe in comparison when involving BJKST.
-//        int arrayLen = (int)Math.pow(10,5);
-////        long universe = (long)Math.pow(2,32);     //use this universe in comparison otherwise
-//        for (int i = 0; i < arrayLen; i++) {
-//            int j = StdRandom.uniform(universe);
-//            testArray.add(j);
-//        }
-//
-//        BJKST bjkst = new BJKST(universe, 0.1);
-//        Hyperloglog hlog = new Hyperloglog(16);
-//        Baseline bsl = new Baseline();
-//        metricMeasure(bjkst, testArray, 0.05);
-////        metricMeasure(hlog, testArray, 0.05);
-////        metricMeasure(bsl, testArray, 0.05);
-//
-//    }
-//
-
-//
-//    public static long medianTrick(DistinctCount dc, ArrayList<Integer> elements, double delta) {
-//        int d = (int)(12 * Math.log(1 / delta));
-//        long[] distincts = new long[d];
-//        for (int i = 0; i < d; i++) {
-//            distincts[i] = dc.compute(elements);
-//        }
-//        Arrays.sort(distincts);
-//        return (distincts.length % 2 != 0) ? distincts[distincts.length / 2] : (distincts[distincts.length /2 ] + distincts[distincts.length / 2 - 1]) / 2 ;
-//    }
-//}
-
 public class test {
     public static void main(String[] args) {
         StdRandom.setSeed(0);
@@ -55,7 +21,6 @@ public class test {
         for (int i = 0; i < numOfDistinct; i++) {
             elements.add((int) h.h2u(i, universe));
         }
-//        elements.stream().sorted().forEach(System.out::println);
         Iterator<Integer> it = elements.stream().sorted().iterator();
         int fallInTheRange = 0;
         for(int j = 0; j < numOfDistinct; j++){
@@ -68,12 +33,12 @@ public class test {
     }
 
     public static void Question4(){
-        long universe = (long)Math.pow(2,32);
+        long universe = (long)Math.pow(2,20);
         Hyperloglog hlog = new Hyperloglog(16);
         Baseline bsl = new Baseline();
-        for (int i = 1; i < 5; i++) {
-            int numOfDistinct = (int)(Math.pow(10,i) * 0.95);
-            int length = (int)Math.pow(10,5);
+        for (int i = 1; i < 7; i++) {
+            int numOfDistinct = (int)Math.pow(10,i);
+            int length = (int)Math.pow(10,7);
             long[] dumpArray = new long[numOfDistinct];
             for (int j = 0; j < numOfDistinct ; j++) {
                 dumpArray[j] = (long)StdRandom.uniform(0,universe);
@@ -88,7 +53,7 @@ public class test {
             long hlogCardinality = hlog.compute(elements);
             long bslCardinality = bsl.compute(elements);
             System.out.println("HyperLogLog: Number of Distinct Elements is " + hlogCardinality);
-//            System.out.println("HyperLogLog: Raw E is " + hlog.getRawE());
+            System.out.println("HyperLogLog: Raw E is " + hlog.getRawE());
             System.out.println("Exact Number of Distinct Elements is " + bslCardinality);
             System.out.println("Relative Error is: " + Math.abs(hlogCardinality - bslCardinality) / (bslCardinality * 1.0));
             System.out.println("**********************");
@@ -100,17 +65,16 @@ public class test {
     }
 
     public static void Question6(){
-        int universe = 13000;  // less than p^(1/3), use this universe in comparison when involving BJKST.
-        BJKST bjkst = new BJKST(universe, 0.1);
+        int universe = (int)Math.pow(2,20);  // less than p^(1/3), use this universe in comparison when involving BJKST.
+        BJKST bjkst = new BJKST(universe, 0.05);
         Hyperloglog hlog = new Hyperloglog(16);
         Baseline bsl = new Baseline();
-        for(int i = 1; i < 5; i++){
-            int numOfDistinct = 10000 + i * 600;
-            int length = (int)Math.pow(10,6);
+        for(int i = 1; i < 6; i++){
+            int numOfDistinct = (int)Math.pow(10,4 * (1 + 0.04 * i));
+            int length = (int)Math.pow(10,7);
             long[] dumpArray = new long[numOfDistinct];
             for (int j = 0; j < numOfDistinct ; j++) {
-//                dumpArray[j] = (long)StdRandom.uniform(0,universe);
-                dumpArray[j] = j + 100;
+                dumpArray[j] = StdRandom.uniform(0,universe);
             }
             ArrayList<Long> elements = new ArrayList<>();
             for (int k = 0; k < numOfDistinct; k++) {               //for each distinct element, repeat length/numOfDistinct times
