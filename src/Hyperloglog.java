@@ -3,10 +3,12 @@ import java.util.Arrays;
 
 public class Hyperloglog implements DistinctCount {
     private final int b;
+    private final long universe;
     private long RawE;
 
-    public Hyperloglog(int b) {
+    public Hyperloglog(long universe, int b) {
         this.b = b;
+        this.universe = universe;
     }
     public long getRawE(){ return this.RawE;}
     public long compute(ArrayList<Long> elements) {
@@ -14,7 +16,7 @@ public class Hyperloglog implements DistinctCount {
         int[] M = new int[m];
         Hash h = new Hash();
         for (long v : elements) {
-            String x = h.h2b(v);
+            String x = h.h2b(v,universe);
             int j = 1 + Integer.parseInt(x.substring(0, b),2);  //the first b bits of x
             String w = x.substring(b);  //the rest bits of x
             int cnt = 0;
@@ -44,13 +46,13 @@ public class Hyperloglog implements DistinctCount {
         if (E <= 2.5 * m) {
             System.out.println("E <= 2.5 * m");
             return (V != 0) ? (long) (m * Math.log((double)m / V)) : E;
-        }
-        if (E <= Math.pow(2, 32) / 30) {
+        } else if (E <= Math.pow(2, 32) / 30) {
             System.out.println("E <= Math.pow(2, 32) / 30");
             return E;
-        } else {
-            System.out.println("E > Math.pow(2, 32) / 30");
+        } else if (E > Math.pow(2,32)/30) {
+            System.out.println("else");
             return (long) (- Math.pow(2, 32) * Math.log(1 - E / Math.pow(2, 32)));
         }
+        return 0;
     }
 }

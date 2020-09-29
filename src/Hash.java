@@ -13,10 +13,7 @@ public class Hash {
         b1 = (long) StdRandom.uniform(0,p1);
         a2 = (long) (StdRandom.uniform(0,p2 - 1) + 1);
         b2 = (long) StdRandom.uniform(0,p2);
-//
-//        System.out.println(a1);
-//        System.out.println(b1);
-//        System.out.println(p1);
+
     }
 
     /**
@@ -44,12 +41,13 @@ public class Hash {
 
 
 
-    public String h2b(long x) {
-        long prod = a2 * x;
-        prod += b2;
-        long y = prod % p2;
-        long hashValue = y % (long)(Math.pow(2,32));
-        return addZeroLHS(Long.toBinaryString(hashValue & 4294967295L),32);     //get lower 32-bit after hash
+    public String h2b(long x, long range) {
+//        long prod = a2 * x;
+//        prod += b2;
+//        long y = prod % p2;
+//        long hashValue = y % range;
+        Long X = x;
+        return addZeroLHS(Long.toBinaryString(X.hashCode() & 4294967295L),32);     //get lower 32-bit after hash
     }
 
 
